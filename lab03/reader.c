@@ -7,12 +7,9 @@
 
 int main() {
     DIR* dir_stream = opendir(".");
-    if (dir_stream == NULL) {
-        return 1;
-    }
     struct dirent* file;
     struct stat buffer;
-    long long total_size;
+    long long total_size = 0;
     int counter = 1;
     while ((file = readdir(dir_stream)) != NULL) {
         stat(file->d_name, &buffer);
@@ -22,7 +19,7 @@ int main() {
             counter++;
         }
     }
-    printf("total size: %lld \n", total_size);
+    printf("Total size: %lld \n", total_size);
     closedir(dir_stream);
     return 0;
 }

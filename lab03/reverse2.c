@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
     printf("Invalid number of arguments\nUsage example: ./reverse2 <file1> <file2>\n");
     return -1;
   }
-  int BUFFER_SIZE = 1024;
+  int BUFFER_SIZE = 10;
   int we = open(argv[1], O_RDONLY);
   int wy = open(argv[2], O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
   char c[BUFFER_SIZE];

@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     pid_t pid = fork();
     if (pid==0) {
       printf("Identyfikator procesu macierzystego: %d; Identyfikator procesu potomnego: %d\n", getppid(), getpid());
-      exit(0);
+      // exit(0);
     }
   }
 

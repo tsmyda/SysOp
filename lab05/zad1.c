@@ -1,30 +1,37 @@
+#define _XOPEN_SOURCE 700
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <signal.h>
 #include <string.h>
+
 void handleSIGUSR1(int signum) {
     printf("Otrzymano sygnał SIGUSR1\n");
 }
 
-int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        fprintf(stderr, "Usage: %s <ignore|handler|mask>\n", argv[0]);
-        return -1;
-    }
+int main() {
+    printf("Select what would you like to be done upon receiving SIGUSR1: \n");
+    printf("n - nothing changes\n");
+    printf("i - ignore signal\n");
+    printf("h - use handler\n");
+    printf("m - mask signal\n");
+    printf("Select option: ");
+    char c;
+    scanf("%c", &c);
 
     sigset_t sigset;
 
-    if (strcmp(argv[1], "ignore") == 0) {
+    if (c == 'n') {
+        printf("Nothing changed\n");
+    } else if (c=='i') {
         signal(SIGUSR1, SIG_IGN);
-    } else if (strcmp(argv[1], "handler") == 0) {
+    } else if (c=='h') {
         signal(SIGUSR1, handleSIGUSR1);
-    } else if (strcmp(argv[1], "mask") == 0) {
+    } else if (c=='m') {
         sigemptyset(&sigset);
         sigaddset(&sigset, SIGUSR1);
         sigprocmask(SIG_BLOCK, &sigset, NULL);
     } else {
-        fprintf(stderr, "Unknown param: %s\n", argv[1]);
         return EXIT_FAILURE;
     }
 
@@ -32,10 +39,10 @@ int main(int argc, char *argv[]) {
 
     sigpending(&sigset);
     if (sigismember(&sigset, SIGUSR1)) {
-        printf("widoczny");
+        printf("Signal is visible\n");
     } else {
-        printf("niewidoczny");
+        printf("Signal is invisible\n");
     }
 
-    return 1;
+    return 0;
 }

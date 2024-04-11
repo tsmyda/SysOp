@@ -26,8 +26,6 @@ int main() {
     int fifo_fd;
     double info[3];
 
-    mkfifo(input_fifo, 0666);
-
     fifo_fd = open(input_fifo, O_RDONLY);
     if (fifo_fd == -1) {
         perror("open");

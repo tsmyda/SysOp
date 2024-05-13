@@ -33,9 +33,9 @@ int main() {
     }
 
     read(fifo_fd, info, sizeof(info));
-    
+    printf("Dane zostały odebrane\n");
     double result = calculate_integral(f, info[2], info[0], info[1]);
-    
+    printf("Wykonano obliczenia\n"); 
     close(fifo_fd);
     unlink(input_fifo);
 
@@ -48,7 +48,7 @@ int main() {
     }
     
     write(fifo_fd, &result, sizeof(result));
-    
+    printf("Dane zostały wyslane\n");
     close(fifo_fd);
     
     return 0;

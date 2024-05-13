@@ -1,7 +1,9 @@
+#include <bits/types/struct_timeval.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <time.h>
 
 double f(double x) {
     return 4.0 / (1 + x * x);
@@ -17,7 +19,7 @@ double calculate_integral(double (*f) (double), double width, double start, doub
     }
     return sum;
 }
-
+    
 int main(int argc, char *argv[]) {
     if (argc != 3) {
         printf("Użycie: %s <interval_width> <number_of_proccesses>\n", argv[0]);
@@ -30,8 +32,8 @@ int main(int argc, char *argv[]) {
     double range_end = 1.0;
     double integral_result = 0.0;
 
-    int pipefd[number_of_proccesses][2]; 
-
+    int pipefd[number_of_proccesses][2];
+    // clock_t start = clock();
     for (int i = 0; i < number_of_proccesses; i++) {
         if (pipe(pipefd[i]) == -1) {
             perror("pipe");
@@ -55,6 +57,10 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    for (int i=0; i<number_of_proccesses; i++) {
+        wait(NULL);
+    }
+
     for (int i = 0; i < number_of_proccesses; i++) {
         close(pipefd[i][1]);
         double proccess_result;
@@ -63,7 +69,9 @@ int main(int argc, char *argv[]) {
         close(pipefd[i][0]);
     }
 
+    // clock_t end = clock();
+    // double timeSpent = (double)(end - start) / CLOCKS_PER_SEC;
     printf("Wynik całkowania: %f\n", integral_result);
-
+    // printf("h: %f, Liczba procesów: %d, Czas: %f sekund\n", rectangle_width, number_of_proccesses, timeSpent);
     return 0;
 }

@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 #define SERVER_QUEUE "/server_queue"
-#define MAX_CLIENTS 10
+#define MAX_CLIENTS 2 
 #define MAX_MESSAGE_SIZE 1024
 
 struct client {

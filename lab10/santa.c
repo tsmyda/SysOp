@@ -11,7 +11,6 @@
 int raindeer_cnt=0;
 int santa_sleeping=1;
 
-
 pthread_mutex_t raindeer_mutex;
 pthread_mutex_t santa_mutex;
 
@@ -19,38 +18,26 @@ pthread_cond_t santa_woken;
 pthread_cond_t raindeer_waiting;
 
 
-void wake_santa(void){
-    pthread_mutex_lock(&santa_mutex);
-    santa_sleeping=0;
-    pthread_cond_broadcast(&santa_woken);
-    pthread_mutex_unlock(&santa_mutex);
-}
-
-
 void *reindeer_behavior(void *args){
     pthread_setcancelstate(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
     while(1){
-        sleep(rand()%6+5);                                                           //vacation
+        sleep(rand()%6+5);
         pthread_mutex_lock(&raindeer_mutex);                                            
-        raindeer_cnt+=1;                                                             //come back
+        raindeer_cnt+=1;
         printf("Renifer %lu: czeka %d reniferów na Mikołaja\n", pthread_self(), raindeer_cnt);
-        if(raindeer_cnt==RAINDEER_N){                                                        //wake Santa
+        if(raindeer_cnt==RAINDEER_N){
             printf("Renifer %lu: wybudzam Mikołaja\n", pthread_self());
             pthread_mutex_unlock(&raindeer_mutex);
-            wake_santa();
+            // wake santa
+            santa_sleeping=0;
+            pthread_cond_signal(&santa_woken);
         }  
-        while(raindeer_cnt!=0){
+        while (raindeer_cnt!=0){
             pthread_cond_wait(&raindeer_waiting, &raindeer_mutex);
         }
         pthread_mutex_unlock(&raindeer_mutex);
         
     }
-    return NULL;
-}
-
-void *santa_behavior(void *args){
-    pthread_setcancelstate(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-    
     return NULL;
 }
 
@@ -65,20 +52,16 @@ int main()
     pthread_cond_init(&raindeer_waiting, NULL); 
 
     pthread_t *threads;
+    threads = malloc(RAINDEER_N * sizeof(pthread_t));
 
-    threads=calloc(RAINDEER_N, sizeof(pthread_t));
-
-    int index=0;
-    
     for(int i=0;i<RAINDEER_N;i++){
-        pthread_create(threads+sizeof(pthread_t)*index, NULL, reindeer_behavior, NULL);
-        index++;
+        pthread_create(threads+sizeof(pthread_t)*i, NULL, reindeer_behavior, NULL);
     }
 
     //SANTA
     int presents_cnt=0;
     while(presents_cnt<PRESENT_N){  
-        pthread_mutex_lock(&santa_mutex); 
+        // pthread_mutex_lock(&santa_mutex); 
         while(santa_sleeping){
             pthread_cond_wait(&santa_woken, &santa_mutex);
         }
@@ -95,7 +78,7 @@ int main()
         
         printf("Mikołaj: zasypiam\n");
         santa_sleeping=1;
-        pthread_mutex_unlock(&santa_mutex);
+        // pthread_mutex_unlock(&santa_mutex);
     }
 
 

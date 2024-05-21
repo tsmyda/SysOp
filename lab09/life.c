@@ -1,5 +1,6 @@
 #include <ncurses.h>
 #include <locale.h>
+#include <signal.h>
 #include <unistd.h>
 #include <stdbool.h>
 #include "grid.h"
@@ -12,6 +13,7 @@ int main(int argc, char **argv) {
     printf("Usage: %s n\n", argv[0]);
     return -1;
   }
+
   int threads_no = atoi(argv[1]);
 	srand(time(NULL));
 	setlocale(LC_CTYPE, "");
@@ -38,6 +40,6 @@ int main(int argc, char **argv) {
 	endwin(); // End curses mode
 	destroy_grid(foreground);
 	destroy_grid(background);
-  // free_memory();
+	free_mem();
 	return 0;
 }

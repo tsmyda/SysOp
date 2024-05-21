@@ -1,5 +1,6 @@
 #include "grid.h"
 #include <pthread.h>
+#include <stdio.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <time.h>
@@ -116,6 +117,12 @@ typedef struct ThreadArguments {
 pthread_t *threads = NULL;
 ThreadArguments *args = NULL;
 
+void free_mem() {
+    free(threads);
+    free(args);
+}
+
+
 void ignore_signal(int signum) {}
 
 void* update_cell(void *args) {
@@ -140,6 +147,7 @@ void* update_cell(void *args) {
 void update_grid_parallel(char *src, char *dst, int threads_no) {
     struct sigaction sa;
     sa.sa_handler = ignore_signal;
+    
     sigemptyset(&sa.sa_mask);
     sigaction(SIGUSR1, &sa, NULL);
 
@@ -155,7 +163,7 @@ void update_grid_parallel(char *src, char *dst, int threads_no) {
         args[i].src = src;
         args[i].dst = dst;    
         args[i].start = i > 0 ? args[i-1].stop+1 : 0;
-        args[i].stop = args[i].start + size - 1 + (r-->0 ? 1 : 0); 
+        args[i].stop = args[i].start + size - 1 + (r>i ? 1 : 0); 
         pthread_create(&threads[i], NULL, update_cell, (void *) &args[i]);
     }
 

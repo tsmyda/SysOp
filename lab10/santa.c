@@ -26,7 +26,6 @@ void *reindeer_behavior(void *args){
         printf("Renifer %lu: czeka %d reniferów na Mikołaja\n", pthread_self(), raindeer_cnt);
         if(raindeer_cnt==RAINDEER_N){
             printf("Renifer %lu: wybudzam Mikołaja\n", pthread_self());
-            // pthread_mutex_unlock(&raindeer_mutex);
             // wake santa
             pthread_mutex_lock(&santa_mutex);
             santa_sleeping=0;
@@ -36,7 +35,7 @@ void *reindeer_behavior(void *args){
         while (raindeer_cnt!=0){
             pthread_cond_wait(&raindeer_waiting, &raindeer_mutex);
         }
-        printf("Renifer %lu: lecę na wakację\n", pthread_self());
+        // printf("Renifer %lu: lecę na wakacje\n", pthread_self());
         pthread_mutex_unlock(&raindeer_mutex);
     }
     return NULL;
@@ -44,7 +43,6 @@ void *reindeer_behavior(void *args){
 
 int main()
 {   
-    //INIT
     srand(time(NULL)); 
 
     pthread_mutex_init(&raindeer_mutex, NULL);

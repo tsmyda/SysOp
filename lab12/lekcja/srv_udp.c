@@ -15,7 +15,7 @@ int main(void) {
     memset(&ser, 0, sizeof(ser));
     ser.sin_family = AF_INET;
     ser.sin_port = htons(9001);
-    ser.sin_addr.s_addr = htonl(INADDR_ANY); //inet_addr("127.0.0.1")
+    ser.sin_addr.s_addr = /*htonl(INADDR_ANY);*/ inet_addr("127.0.0.1");
     
     status = bind(gniazdo, (struct sockaddr *) &ser, sizeof(ser));
     if (status==1) {printf("blad bind\n"); return 0;}
